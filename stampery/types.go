@@ -1,15 +1,21 @@
 package stampery
 
-type anchor struct {
-	chain int
-	tx    string
+type Anchor struct {
+	Chain int
+	Tx    string
+}
+type Proof struct {
+	Version  int
+	Siblings []string
+	Root     string
+	Anchor   Anchor
 }
 
-type Proof struct {
-	version  int
-	siblings []string
-	root     string
-	anchor   anchor
+type Proof2 struct {
+	Version  uint64
+	Siblings interface{}
+	Root     string
+	Anchor   Anchor
 }
 
 type Event struct {

@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
+	"strconv"
+	"time"
 
 	"./stampery"
 )
@@ -12,7 +15,8 @@ func main() {
 	for event := range events {
 		switch event.Type {
 		case "ready":
-			digest := stampery.Hash("Hello blockchain!")
+			r := rand.New(rand.NewSource(time.Now().UnixNano()))
+			digest := stampery.Hash("Hello blockchain!" + strconv.Itoa(r.Int()))
 			stampery.Stamp(digest)
 		case "proof":
 			fmt.Println(event.Data)

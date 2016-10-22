@@ -67,7 +67,7 @@ func amqpLogin(clientID, branch string) {
 	if branch == "prod" {
 		url = "amqp://consumer:9FBln3UxOgwgLZtYvResNXE7@young-squirrel.rmq.cloudamqp.com/ukgmnhoi"
 	} else {
-		url = "amqp://consumer:9FBln3UxOgwgLZtYvResNXE7@young-squirrel.rmq.cloudamqp.com/ukgmnhoi"
+		url = "amqp://consumer:9FBln3UxOgwgLZtYvResNXE7@young-squirrel.rmq.cloudamqp.com/beta"
 	}
 
 	conn, err := amqp.Dial(url)
@@ -84,14 +84,23 @@ func amqpLogin(clientID, branch string) {
 
 	for d := range msgs {
 		fmt.Println("\n\nproof")
-		fmt.Println(d.RoutingKey)
-
 		var h codec.MsgpackHandle
+
 		dec := codec.NewDecoderBytes(d.Body, &h)
-		var v interface{}
-		err := dec.Decode(&v)
-		failOnError(err, "Couldn't unpack proof")
-		fmt.Println(v)
+
+		var v Proof
+		var v2 Proof2
+
+		if err := dec.Decode(&v); err != nil {
+			dec.ResetBytes(d.Body)
+			if err := dec.Decode(&v2); err != nil {
+				failOnError(err, "Couldn't decode the proof :(")
+			} else {
+				fmt.Println(v2)
+			}
+		} else {
+			fmt.Println(v)
+		}
 	}
 }
 
