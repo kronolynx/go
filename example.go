@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"strconv"
 	"time"
@@ -10,7 +11,7 @@ import (
 )
 
 func main() {
-	events := stampery.Login("a0ad0ee3-2466-43db-9b88-5185bd2cc40b")
+	events := stampery.Login("2d4cdee7-38b0-4a66-da87-c1ab05b43768")
 
 	for event := range events {
 		switch event.Type {
@@ -19,9 +20,13 @@ func main() {
 			digest := stampery.Hash("Hello blockchain!" + strconv.Itoa(r.Int()))
 			stampery.Stamp(digest)
 		case "proof":
-			fmt.Println(event.Data)
+			fmt.Println("\nProof")
+			p := event.Data.(stampery.Proof)
+			fmt.Printf("Version: %v\nSiblings: %v\nRoot: %v\n", p.Version, p.Siblings, p.Root)
+			fmt.Printf("Anchor:\n  Chain: %v\n  Tx: %v\n", p.Anchor.Chain, p.Anchor.Tx)
+
 		case "error":
-			fmt.Println(event.Data)
+			log.Fatalf("%v\n", event.Data)
 		}
 	}
 }

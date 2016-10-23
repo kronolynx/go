@@ -83,23 +83,26 @@ func amqpLogin(clientID, branch string) {
 	failOnError(err, "Failed to register consumer!")
 
 	for d := range msgs {
-		fmt.Println("\n\nproof")
 		var h codec.MsgpackHandle
 
 		dec := codec.NewDecoderBytes(d.Body, &h)
 
 		var v Proof
-		var v2 Proof2
-
+		// if the Proof doesn't contain siblings the conversion would fail
+		// then we need to use a second struch to hand the error
 		if err := dec.Decode(&v); err != nil {
 			dec.ResetBytes(d.Body)
-			if err := dec.Decode(&v2); err != nil {
+			var temp temp
+			if err := dec.Decode(&temp); err != nil {
 				failOnError(err, "Couldn't decode the proof :(")
 			} else {
-				fmt.Println(v2)
+				v.Version = temp.Version
+				v.Root = temp.Root
+				v.Anchor = temp.Anchor
+				events <- Event{"proof", v}
 			}
 		} else {
-			fmt.Println(v)
+			events <- Event{"proof", v}
 		}
 	}
 }
@@ -112,6 +115,7 @@ func getClientID(secret string) string {
 
 func failOnError(err error, msg string) {
 	if err != nil {
-		log.Fatalf("%s: %s", msg, err)
+		events <- Event{"error", err.Error() + " " + msg}
+		log.Fatalf("%s %s", err, msg)
 	}
 }
