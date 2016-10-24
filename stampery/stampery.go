@@ -33,7 +33,7 @@ func Login(params ...string) chan Event {
 // Hash a string with sha3 512
 func Hash(data string) string {
 	hash := sha3.Sum512([]byte(data))
-	return hex.EncodeToString(hash[:])
+	return strings.ToUpper(hex.EncodeToString(hash[:]))
 }
 
 // Stamp a string
