@@ -88,8 +88,9 @@ func amqpLogin(clientID, branch string) {
 		dec := codec.NewDecoderBytes(d.Body, &h)
 
 		var v Proof
+		v.Hash = d.RoutingKey
 		// if the Proof doesn't contain siblings the conversion would fail
-		// then we need to use a second struch to hand the error
+		// then we need to use a temporary struct to handle the error
 		if err := dec.Decode(&v); err != nil {
 			dec.ResetBytes(d.Body)
 			var temp temp

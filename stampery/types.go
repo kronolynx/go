@@ -12,6 +12,7 @@ type Proof struct {
 	Siblings []string
 	Root     string
 	Anchor   Anchor
+	Hash     string
 }
 
 //temporary placeholder when the proof doesn't have siblings
