@@ -16,6 +16,8 @@ import (
 
 var apiClient *rpc.Session
 var events = make(chan Event)
+var wrapper = "golang"
+var version = "0.1.0"
 
 //Login to the Stampery API
 func Login(params ...string) chan Event {
@@ -55,7 +57,7 @@ func apiLogin(clientID, secret, branch string) {
 	conn, err := net.Dial("tcp", address)
 	failOnError(err, "Couldn't connect to Api!")
 	apiClient = rpc.NewSession(conn, true)
-	isLogged, xerr := apiClient.Send("stampery.3.auth", clientID, secret)
+	isLogged, xerr := apiClient.Send("stampery.3.auth", clientID, secret, wrapper+"-"+version)
 	failOnError(xerr, "Couldn't connect to Api")
 	if isLogged.Bool() {
 		fmt.Println("logged ", clientID)
