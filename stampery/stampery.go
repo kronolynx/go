@@ -122,3 +122,34 @@ func failOnError(err error, msg string) {
 		log.Fatalf("%s %s", err, msg)
 	}
 }
+
+// Prove validates proof
+func Prove(proof Proof) bool {
+	return prove(proof.Hash, proof.Siblings, proof.Root)
+}
+
+func prove(hash string, siblings []string, root string) bool {
+	if len(siblings) > 0 {
+		mixed := mix(hash, siblings[0])
+		return prove(mixed, siblings[1:], root)
+	}
+	return hash == root
+
+}
+
+func mix(a string, b string) string {
+	a = hex2bin(a)
+	b = hex2bin(b)
+	var commuted string
+	if a > b {
+		commuted = a + b
+	} else {
+		commuted = b + a
+	}
+	return Hash(commuted)
+}
+
+func hex2bin(data string) string {
+	bin, _ := hex.DecodeString(data)
+	return string(bin)
+}
