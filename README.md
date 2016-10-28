@@ -29,8 +29,8 @@ import (
 )
 
 func main() {
-	// Login to the stampery API
-	events := stampery.Login("2d4cdee7-38b0-4a66-da87-c1ab05b43768")
+    // Sign up and get your secret token at https://api-dashboard.stampery.com
+	events := stampery.Login("user-secret")
 
 	for event := range events {
 		switch event.Type {
